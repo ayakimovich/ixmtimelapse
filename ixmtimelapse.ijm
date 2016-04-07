@@ -1,6 +1,6 @@
 //============================================================
 //
-// ImageJ Macro to create Plate montage from single IXM images
+// ImageJ Macro to create timelapse movies from single IXM timelapse images
 //    (c)2011-2016 Artur Yakimovich, University of Zurich 
 //============================================================
 macro "ixmtimelapse" {
@@ -205,10 +205,16 @@ macro "ixmtimelapse" {
 	guiSeparator = "\n__________________________________________________\n "
 	version = "\n                                               v0.2. MIT license."
 	copyrightMessage = "                                 ImageXpress Micro Timelapse \n                        (copyright) Artur Yakimovich 2011-"+year
-	
+	html = "<html>"
+     +"<h2>ImageXpress Micro Timelapse About</h2>"
+     +"<font size=+1>"
+     +"Please visit <a href='https://github.com/ayakimovich/ixmtimelapse'>https://github.com/ayakimovich/ixmtimelapse</a> For the up-to-date version, help or contributing<br><br>"
+     +"Copyright &copy; Artur Yakimovich 2011-"+year+"</font>"
+     +"</html>";
 	// draw parameters 1
 	Dialog.create("ImageXpress Micro Timelapse - setup step 1 of 3");
 		Dialog.addMessage(copyrightMessage+version+guiSeparator);
+		Dialog.addHelp(html);
 		Dialog.addMessage("1. Set up general Parameters:");
 		Dialog.addCheckbox("1a. Pre-process to create multi-layer TIF-files (step 2)", true);		
 		Dialog.addCheckbox("1b. Merge and save RGB TIF stacks (step 3)", true);
@@ -224,7 +230,7 @@ macro "ixmtimelapse" {
 		// draw parameters 3
 		Dialog.create("ImageXpress Micro Timelapse - setup step 2 of 3");
 			Dialog.addMessage(copyrightMessage+version+guiSeparator);
-			
+			Dialog.addHelp(html);
 			Dialog.addNumber("2a. First Wavelength:", 1);
 			Dialog.addNumber("2b. Last Wavelength:", 2);
 			Dialog.addNumber("2c. First Plate Column:", 1);
@@ -255,6 +261,7 @@ macro "ixmtimelapse" {
 		// draw parameters 3
 		Dialog.create("ImageXpress Micro Timelapse - setup step 3 of 3");
 			Dialog.addMessage(copyrightMessage+version+guiSeparator);
+			Dialog.addHelp(html);
 			Dialog.addMessage("3. Merge Channels:");
 			Dialog.addString("3a. File name pattern:", "^.*_[A-H][0-9]*_s[0-9]_w1.*.tif")
 			Dialog.addString("3b. Save Folder Name:", "RGB_Movies")
