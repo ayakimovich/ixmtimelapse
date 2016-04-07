@@ -1,0 +1,3 @@
+# ixmtimelapse
+## ImageJ Macro to create timelapse movies from single IXM timelapse images
+Help text coming soon...
