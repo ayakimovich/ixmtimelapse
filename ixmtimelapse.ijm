@@ -3,7 +3,7 @@
 // ImageJ Macro to create timelapse movies from single IXM timelapse images
 //    (c)2011-2016 Artur Yakimovich, University of Zurich 
 //============================================================
-macro "ixmtimelapse" {
+//macro "ixmtimelapse" {
 	 //functions definition
 
 	 function getTimePointList(ReadPath){
@@ -126,15 +126,13 @@ macro "ixmtimelapse" {
 		print ("end preprocessing");
       
     }
-	function stacks2rgb(filePattern, patternRed, minRed, maxRed, preprocess, patternGreen, minGreen, maxGreen, patternBlue, minBlue, maxBlue, ReadPath, grayFlag, patternGray, minGray, maxGray, processedDir){
-
-
-	
-
-		dirList = getDirAndFileList(ReadPath, filePattern, "dir")
-		fileList = getDirAndFileList(ReadPath, filePattern, "file")
+	function stacks2rgb(filePattern, patternRed, minRed, maxRed, preprocess, patternGreen, minGreen, maxGreen, patternBlue, minBlue, maxBlue, ReadPath, grayFlag, patternGray, minGray, maxGray, processedDir, preprocessFolderName){
+		ReadPath = ReadPath+preprocessFolderName+File.separator;
+		dirList = getDirAndFileList(ReadPath, filePattern, "dir");
+		fileList = getDirAndFileList(ReadPath, filePattern, "file");
 		//main for-loop
-		
+		print(ReadPath);
+		print(filePattern);
 		print(fileList.length);
 		print ("start");
 		
@@ -159,6 +157,7 @@ macro "ixmtimelapse" {
 			// green
 			greenFileName = replace(fileList[i], "w1", patternGreen);
 			open(ReadPath+greenFileName);
+			
 			if(preprocess == true){
 				run("Enhance Contrast", "saturated=0.35");
 				run("Subtract Background...", "rolling=50 stack");
@@ -211,6 +210,8 @@ macro "ixmtimelapse" {
      +"Please visit <a href='https://github.com/ayakimovich/ixmtimelapse'>https://github.com/ayakimovich/ixmtimelapse</a> For the up-to-date version, help or contributing<br><br>"
      +"Copyright &copy; Artur Yakimovich 2011-"+year+"</font>"
      +"</html>";
+
+     
 	// draw parameters 1
 	Dialog.create("ImageXpress Micro Timelapse - setup step 1 of 3");
 		Dialog.addMessage(copyrightMessage+version+guiSeparator);
@@ -225,6 +226,8 @@ macro "ixmtimelapse" {
 	step2Flag = Dialog.getCheckbox();
 	step3Flag = Dialog.getCheckbox();
 	grayFlag = Dialog.getCheckbox();
+	step2Parameters = "";
+	step3Parameters = "";
 	//2.	
 	if (step2Flag == true){
 		// draw parameters 3
@@ -255,6 +258,11 @@ macro "ixmtimelapse" {
 		preprocessFolderName = Dialog.getString();
 		firstSite = Dialog.getNumber();
 		lastSite = Dialog.getNumber();
+		rowLetterArrayPrint = "";
+		for (i = 0; i <= RowLetterArray.length-1; i++){
+			rowLetterArrayPrint = rowLetterArrayPrint + RowLetterArray[i] + ", ";
+		}
+		step2Parameters = "\n\t RowLetterArray:"+rowLetterArrayPrint+"\n\t firstPlateColumn:"+d2s(firstPlateColumn,0)+"\n\t lastPlateColumn:"+d2s(lastPlateColumn,0)+"\n\t firstSite:"+d2s(firstSite,0)+"\n\t lastSite:"+d2s(lastSite,0)+"\n\t firstWavelength:"+d2s(firstWavelength,0)+"\n\t lastWavelength:"+d2s(lastWavelength,0)+"\n\t processedDir:"+preprocessFolderName;
 	}
 	//3.
 	if (step3Flag == true){
@@ -263,23 +271,23 @@ macro "ixmtimelapse" {
 			Dialog.addMessage(copyrightMessage+version+guiSeparator);
 			Dialog.addHelp(html);
 			Dialog.addMessage("3. Merge Channels:");
-			Dialog.addString("3a. File name pattern:", "^.*_[A-H][0-9]*_s[0-9]_w1.*.tif")
-			Dialog.addString("3b. Save Folder Name:", "RGB_Movies")
-			Dialog.addString("3c. Red name pattern:", "w1");
-			Dialog.addSlider("3d. Min Red:", 0, 65535, 150);
-			Dialog.addSlider("3e. Max Red:", 0, 65535, 1800);
-			Dialog.addString("3f. Green name pattern:", "w2");
-			Dialog.addSlider("3g. Min Green:", 0, 65535, 150);
-			Dialog.addSlider("3h. Max Green:", 0, 65535, 1800);
-			Dialog.addString("3i. Blue name pattern:", "w3");
-			Dialog.addSlider("3j. Min Green:", 0, 65535, 50);
-			Dialog.addSlider("3k. Max Green:", 0, 65535, 300);
-			
+			Dialog.addString("3a. File name pattern:", "^.*_[A-H][0-9]*_s[0-9]_w1.tif");
+			Dialog.addString("3b. Save Folder Name:", "RGB_Movies");
+			Dialog.addString("2c. Folder Name:", "16bit_Movies");
+			Dialog.addString("3d. Red name pattern:", "w4");
+			Dialog.addSlider("3e. Min Red:", 0, 65535, 500);
+			Dialog.addSlider("3f. Max Red:", 0, 65535, 900);
+			Dialog.addString("3g. Green name pattern:", "w3");
+			Dialog.addSlider("3h. Min Green:", 0, 65535, 1600);
+			Dialog.addSlider("3i. Max Green:", 0, 65535, 3000);
+			Dialog.addString("3j. Blue name pattern:", "w2");
+			Dialog.addSlider("3k. Min Green:", 0, 65535, 200);
+			Dialog.addSlider("3l. Max Green:", 0, 65535, 700);
 			if(grayFlag == true){
-				Dialog.addString("3l. Gray name pattern:", "w4");
-				Dialog.addSlider("3m. Min Green:", 0, 65535, 1200);
-				Dialog.addSlider("3n. Max Green:", 0, 65535, 6000);
-				Dialog.addCheckbox("3o. Gray-scale pre-processing", true);
+				Dialog.addString("3m. Gray name pattern:", "w1");
+				Dialog.addSlider("3n. Min Green:", 0, 65535, 2000);
+				Dialog.addSlider("3o. Max Green:", 0, 65535, 12000);
+				Dialog.addCheckbox("3p. Gray-scale pre-processing", true);
 			}
 			Dialog.addMessage(guiSeparator);
 		Dialog.show();
@@ -287,6 +295,7 @@ macro "ixmtimelapse" {
 		//retrieving parameters 3.	
 		filePattern = Dialog.getString();
 		saveFolderName = Dialog.getString();
+		preprocessFolderName = Dialog.getString();
 		patternRed = Dialog.getString();
 		minRed = Dialog.getNumber();
 		maxRed = Dialog.getNumber();
@@ -308,6 +317,7 @@ macro "ixmtimelapse" {
 			maxGray = 0;
 			preprocess = false;
 		}
+		step3Parameters = "\n\t filePattern:"+filePattern+"\n\t patternRed:"+d2s(patternRed,0)+"\n\t minRed:"+d2s(minRed,0)+"\n\t maxRed:"+d2s(maxRed,0)+"\n\t preprocess:"+preprocess+"\n\t patternGreen:"+d2s(patternGreen,0)+"\n\t minGreen:"+d2s(minGreen,0)+"\n\t maxGreen:"+d2s(maxGreen,0)+"\n\t patternBlue:"+patternBlue+"\n\t minBlue:"+d2s(minBlue,0)+"\n\t maxBlue:"+d2s(maxBlue,0)+"\n\t grayFlag:"+grayFlag+"\n\t patternGray:"+patternGray+"\n\t minGray:"+d2s(minGray,0)+"\n\t maxGray:"+d2s(maxGray,0)+"\n\t saveDir:"+saveFolderName+"\n\tprocessedDir:"+preprocessFolderName;
 	}
 	if(step3Flag == false && step2Flag == false){
 		print("no processing selected. exiting...");
@@ -315,18 +325,13 @@ macro "ixmtimelapse" {
 	}
 	else{
 		ReadPath = getDirectory("Choose a Directory");
-	  
+		step2Parameters = step2Parameters + "ReadPath:"+ReadPath+"\n\t";
+		step3Parameters = step3Parameters + "ReadPath:"+ReadPath+"\n\t";
 		setBatchMode(true);
 		//save parameters to a text file
 		f = File.open(ReadPath+"timelapse_parameters.txt");
-			rowLetterArrayPrint = "";
-			for (i = 0; i <= RowLetterArray.length-1; i++){
-					rowLetterArrayPrint = rowLetterArrayPrint + RowLetterArray[i] + ", ";
-				}
-			step1Parameters = "\n\t RowLetterArray:"+rowLetterArrayPrint+"\n\t firstPlateColumn:"+d2s(firstPlateColumn,0)+"\n\t lastPlateColumn:"+d2s(lastPlateColumn,0)+"\n\t firstSite:"+d2s(firstSite,0)+"\n\t lastSite:"+d2s(lastSite,0)+"\n\t firstWavelength:"+d2s(firstWavelength,0)+"\n\t lastWavelength:"+d2s(lastWavelength,0)+"\n\t ReadPath:"+ReadPath+"\n\t processedDir:"+preprocessFolderName;
-			step2Parameters = "\n\t filePattern:"+filePattern+"\n\t patternRed:"+d2s(patternRed,0)+"\n\t minRed:"+d2s(minRed,0)+"\n\t maxRed:"+d2s(maxRed,0)+"\n\t preprocess:"+preprocess+"\n\t patternGreen:"+d2s(patternGreen,0)+"\n\t minGreen:"+d2s(minGreen,0)+"\n\t maxGreen:"+d2s(maxGreen,0)+"\n\t patternBlue:"+patternBlue+"\n\t minBlue:"+d2s(minBlue,0)+"\n\t maxBlue:"+d2s(maxBlue,0)+"\n\t ReadPath:"+ReadPath+"\n\t grayFlag:"+grayFlag+"\n\t patternGray:"+patternGray+"\n\t minGray:"+d2s(minGray,0)+"\n\t maxGray:"+d2s(maxGray,0)+"\n\t saveDir:"+saveFolderName;
-			print(f,"Step 1 Parameeters: \n"+step1Parameters+"Step 2 Parameeters: \n"+step2Parameters);
-		File.close(f)
+			print(f,"Step 2 Parameeters: \n"+step2Parameters+"Step 3 Parameeters: \n"+step3Parameters);
+		File.close(f);
 		//running processings
 		
 		//2.
@@ -342,9 +347,9 @@ macro "ixmtimelapse" {
 		//finnal movies dir
 			saveDir=ReadPath+saveFolderName;
 			File.makeDirectory(saveDir);
-				stacks2rgb(filePattern, patternRed, minRed, maxRed, preprocess, patternGreen, minGreen, maxGreen, patternBlue, minBlue, maxBlue, ReadPath, grayFlag, patternGray, minGray, maxGray, saveDir);
+				stacks2rgb(filePattern, patternRed, minRed, maxRed, preprocess, patternGreen, minGreen, maxGreen, patternBlue, minBlue, maxBlue, ReadPath, grayFlag, patternGray, minGray, maxGray, saveDir, preprocessFolderName);
 			}
 		setBatchMode(false);
 		}
-	}
-}
+	//}
+//}
