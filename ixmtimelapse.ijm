@@ -3,7 +3,7 @@
 // ImageJ Macro to create timelapse movies from single IXM timelapse images
 //    (c)2011-2016 Artur Yakimovich, University of Zurich 
 //============================================================
-//macro "ixmtimelapse" {
+macro "ixmtimelapse" {
 	 //functions definition
 
 	 function getTimePointList(ReadPath){
@@ -352,4 +352,4 @@
 		setBatchMode(false);
 		}
 	//}
-//}
+}
