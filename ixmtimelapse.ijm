@@ -126,6 +126,7 @@ macro "ixmtimelapse" {
 		print ("end preprocessing");
       
     }
+    
 	function stacks2rgb(filePattern, patternRed, minRed, maxRed, preprocess, patternGreen, minGreen, maxGreen, patternBlue, minBlue, maxBlue, ReadPath, grayFlag, patternGray, minGray, maxGray, processedDir, preprocessFolderName){
 		ReadPath = ReadPath+preprocessFolderName+File.separator;
 		dirList = getDirAndFileList(ReadPath, filePattern, "dir");
@@ -144,36 +145,46 @@ macro "ixmtimelapse" {
 			// red
 			redFileName = replace(fileList[i], "w1", patternRed);
 			print(ReadPath+redFileName);
-			open(ReadPath+redFileName);
-			
-			if(preprocess == true){
-				print("preprocessing...");
-				run("Enhance Contrast", "saturated=0.35");
-				run("Subtract Background...", "rolling=50 stack");
+			if(patternRed!=""){
+				open(ReadPath+redFileName);
+				
+				if(preprocess == true){
+					print("preprocessing...");
+					run("Enhance Contrast", "saturated=0.35");
+					run("Subtract Background...", "rolling=50 stack");
+				}
+				setMinAndMax(minRed, maxRed);
+			    run("8-bit");
 			}
-			setMinAndMax(minRed, maxRed);
-		    run("8-bit");
-		    
 			// green
 			greenFileName = replace(fileList[i], "w1", patternGreen);
-			open(ReadPath+greenFileName);
+			if(patternGreen!=""){
+				open(ReadPath+greenFileName);
 			
-			if(preprocess == true){
-				run("Enhance Contrast", "saturated=0.35");
-				run("Subtract Background...", "rolling=50 stack");
+				if(preprocess == true){
+					run("Enhance Contrast", "saturated=0.35");
+					run("Subtract Background...", "rolling=50 stack");
+				}
+				setMinAndMax(minGreen, maxGreen);
+			    run("8-bit");
 			}
-			setMinAndMax(minGreen, maxGreen);
-		    run("8-bit");
-		    
 			// blue
 			blueFileName = replace(fileList[i], "w1", patternBlue);
-			open(ReadPath+blueFileName);
-			if(preprocess == true){
-				run("Enhance Contrast", "saturated=0.35");
-				run("Subtract Background...", "rolling=50 stack");
+			if(patternBlue!=""){
+				open(ReadPath+blueFileName);
+			
+				if(preprocess == true){
+					run("Enhance Contrast", "saturated=0.35");
+					run("Subtract Background...", "rolling=50 stack");
+				}
+				setMinAndMax(minBlue, maxBlue);
+		    	run("8-bit");
 			}
-			setMinAndMax(minBlue, maxBlue);
-		    run("8-bit");
+			getDimensions(width, height, channels, slices, frames);
+			if(patternGreen == "" || patternBlue == "" || patternRed == ""){
+				newImage(patternGreen, "8-bit black", width, height, slices);
+			}
+			
 			if(grayFlag == true){		
 				grayFileName = replace(fileList[i], "w1", patternGray);
 				open(ReadPath+grayFileName);
