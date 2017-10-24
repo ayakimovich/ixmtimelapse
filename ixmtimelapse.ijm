@@ -144,6 +144,7 @@ macro "ixmtimelapse" {
 		    //red are 4000 and 18000; for green 3500 and 28000; for blue 700 and 2500
 			// red
 			redFileName = replace(fileList[i], "w1", patternRed);
+			blancFileName = replace(fileList[i], "w1", "");
 			print(ReadPath+redFileName);
 			if(patternRed!=""){
 				open(ReadPath+redFileName);
@@ -156,6 +157,7 @@ macro "ixmtimelapse" {
 				setMinAndMax(minRed, maxRed);
 			    run("8-bit");
 			}
+			else {print("no red selected");}
 			// green
 			greenFileName = replace(fileList[i], "w1", patternGreen);
 			if(patternGreen!=""){
@@ -168,6 +170,7 @@ macro "ixmtimelapse" {
 				setMinAndMax(minGreen, maxGreen);
 			    run("8-bit");
 			}
+			else {print("no green selected");}
 			// blue
 			blueFileName = replace(fileList[i], "w1", patternBlue);
 			if(patternBlue!=""){
@@ -182,9 +185,9 @@ macro "ixmtimelapse" {
 			}
 			getDimensions(width, height, channels, slices, frames);
 			if(patternGreen == "" || patternBlue == "" || patternRed == ""){
-				newImage(patternGreen, "8-bit black", width, height, slices);
+				newImage(blancFileName, "8-bit black", width, height, slices);
 			}
-			
+			else {print("no blue selected");}
 			if(grayFlag == true){		
 				grayFileName = replace(fileList[i], "w1", patternGray);
 				open(ReadPath+grayFileName);
